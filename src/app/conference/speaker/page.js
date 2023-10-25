@@ -1,6 +1,8 @@
 import styles from "../conference.module.css";
 import Link from "next/link";
 
+export let speakerJson = {};
+
 async function fetchSpeakers(){
   const response = await fetch(
     "https://raw.githubusercontent.com/adhithiravi/Consuming-GraphqL-Apollo/master/api/data/speakers.json",
@@ -8,6 +10,12 @@ async function fetchSpeakers(){
   );
 
   const data = await response.json();
+  speakerJson = data;
+
+    // console.log(speakerJson['speakers'][0]['sessions'][0]['name']);
+    console.log(speakerJson['speakers']);
+
+  
   return data;
   
 }
@@ -21,7 +29,7 @@ export default async function Page(){
        <h1>Welcome to THE Jitu speakers </h1>
        {data.speakers.map(({id, name, bio}) => (
         <div key={id} className={styles.infoContainer}>
-          <Link classname={styles.bgLinks}
+          <Link className={styles.bgLinks}
           href={`/conference/speaker/${name}`}
           >
           <h3 className={styles.titleText}>{name}</h3>

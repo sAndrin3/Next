@@ -1,19 +1,26 @@
-import {speakerJson} from "../page";
+
 import styles from "../../conference.module.css";
 
-function fetchSpeakerInfo(params) {
-    // fetch api call, DB query, retrieve data
+async function fetchSpeakerInfo(name) {
+    // fetch data
+    const data = await fetch(
+        "https://raw.githubusercontent.com/adhithiravi/Consuming-GraphqL-Apollo/master/api/data/speakers.json",
+        {next: {revalidate: 20}}
+      );
+    
+    //   parse to json
+    const speakerJson = await data.json();
 
-    const speakerInfo = speakerJson.speakers.find(
-        (speaker) => speaker.name === params.slug
+    // get the speaker with the passed name
+    return speakerJson['speakers']?.find(
+        (speaker) => speaker['name'] == name.split('%20').join(' '),
     );
-
-    return speakerInfo;
 }
 
 export default async function Page({params}) {
-    const speakerInfo = fetchSpeakerInfo(params);
 
+    const speakerInfo = await fetchSpeakerInfo(params.slug);
+    
     const {name, bio, sessions} = speakerInfo;
 
     return (
@@ -23,7 +30,7 @@ export default async function Page({params}) {
             {sessions &&
                 sessions.map(({name, id}) => (
                     <div key={id}>
-                        <h5 className={styles.descText}>Session: </h5>
+                        <h5 className={styles.descText}>Session: {name}</h5>
                     </div>
                 ))}
            
